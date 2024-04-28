@@ -7,8 +7,16 @@ class EmployeeService {
     const newEmployee = await models.Employee.create(data);
     return newEmployee;
   }
-  async find() {
-    const employees = await models.Employee.findAll();
+  async find(query) {
+    const options = {
+      include: ['requests'],
+    };
+    const { limit, offset } = query;
+    if (limit && offset) {
+      options.limit = limit;
+      options.offset = offset;
+    }
+    const employees = await models.Employee.findAll(options);
     return employees;
   }
   async findOne(id) {

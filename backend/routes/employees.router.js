@@ -6,19 +6,24 @@ const {
   updateEmployeeSchema,
   createEmployeeSchema,
   getEmployeeSchema,
+  queryEmployeeSchema,
 } = require('../schemas/employee.schema');
 
 const router = express.Router();
 const employee = new EmployeeService();
 
-router.get('/', async (req, res, next) => {
-  try {
-    const employees = await employee.find();
-    res.json(employees);
-  } catch (error) {
-    next(error);
-  }
-});
+router.get(
+  '/',
+  validatorHandler(queryEmployeeSchema, 'query'),
+  async (req, res, next) => {
+    try {
+      const employees = await employee.find(req.query);
+      res.json(employees);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 router.get(
   '/:id',
