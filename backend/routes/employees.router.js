@@ -1,7 +1,8 @@
 const express = require('express');
-
+const passport = require('passport');
 const EmployeeService = require('./../services/employees.service');
 const validatorHandler = require('./../middlewares/validator.handler');
+const { checkAdminRole } = require('./../middlewares/auth.handler');
 const {
   updateEmployeeSchema,
   createEmployeeSchema,
@@ -41,6 +42,8 @@ router.get(
 
 router.post(
   '/',
+  passport.authenticate('jwt', { session: false }),
+  checkAdminRole,
   validatorHandler(createEmployeeSchema, 'body'),
   async (req, res, next) => {
     try {
