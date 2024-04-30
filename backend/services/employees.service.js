@@ -16,7 +16,10 @@ class EmployeeService {
       options.limit = limit;
       options.offset = offset;
     }
-    const employees = await models.Employee.findAll(options);
+    const employees = await models.Employee.findAll({
+      options,
+      include: ['requests'],
+    });
     return employees;
   }
   async findOne(id) {

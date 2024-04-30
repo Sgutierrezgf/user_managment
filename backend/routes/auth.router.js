@@ -25,5 +25,20 @@ router.post(
     }
   },
 );
+router.get('/verify', async (req, res) => {
+  const { token } = req.cookies;
+  if (!token) return res.status(401).json({ message: 'Unauthorized' });
+  jwt.verify(token, jwtSecret, async (err, user) => {
+    if (err) return res.status(401).json({ message: 'Unauthorized' });
+
+    const userFound = await user.findById(user.id);
+    if (!userFound) return res.status(401).json({ message: 'Unauthorized' });
+  });
+
+  return res.json({
+    id: userFound.id,
+    email: userFound.email,
+  });
+});
 
 module.exports = router;
