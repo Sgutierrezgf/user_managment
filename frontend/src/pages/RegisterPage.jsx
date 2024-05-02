@@ -18,7 +18,7 @@ function RegisterPage() {
 
   useEffect(() => {
     if (isAuthenticated) navigate("/employees");
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   const onSubmit = handleSubmit(async (values) => {
     signup(values);
@@ -27,7 +27,7 @@ function RegisterPage() {
   return (
     <div className="flex h-[calc(100hv-100px)] items-center justify-center">
       <div className="bg-zinc-800 max-w-md w-full p-10 rounded-md">
-        <h1 className="text-2xl font-bold">Login</h1>
+        <h1 className="text-2xl font-bold">Register</h1>
         <form onSubmit={onSubmit}>
           <input
             type="email"
