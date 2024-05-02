@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import HomePage from "./pages/HomePage";
 import EmployeesPage from "./pages/EmployeesPage";
 import { ProtectedRoute } from "./Routes";
+import AddEmployee from "./pages/AddEmployee";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/employees" element={<EmployeesPage />} />
+            <Route path="/employee/add-employee" element={<AddEmployee />} />
           </Route>
         </Routes>
       </BrowserRouter>

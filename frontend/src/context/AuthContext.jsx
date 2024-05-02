@@ -1,12 +1,13 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react/prop-types */
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import {
   registerRequest,
   loginRequest,
   addEmployee,
   updateEmployee,
   deleteEmployeeRequest,
+  getEmployees,
   // verifyTokenRequest,
 } from "../api/auth";
 // import Cookies from "js-cookie";
@@ -25,6 +26,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [employee, setEmployee] = useState(null);
+  const [employees, setEmployees] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [errors, setErrors] = useState([]);
 
@@ -47,6 +49,19 @@ export const AuthProvider = ({ children }) => {
       setErrors(error.response.data);
     }
   };
+
+  useEffect(() => {
+    const fetchEmployeesData = async () => {
+      try {
+        const employeesData = await getEmployees();
+        setEmployees(employeesData.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchEmployeesData();
+  }, []);
 
   const addNewEmployee = async (employee) => {
     try {
@@ -85,6 +100,7 @@ export const AuthProvider = ({ children }) => {
         signin,
         addNewEmployee,
         employee,
+        employees,
         deleteEmployee,
         updateEmployees,
       }}

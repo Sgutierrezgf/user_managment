@@ -9,6 +9,6 @@ export const addEmployee = (employee) =>
   axios.post(`${API}/employees`, employee);
 export const updateEmployee = async (employee) =>
   axios.put(`${API}/employees/${employee.id}`, employee);
-
+export const getEmployees = () => axios.get(`${API}/employees`);
 export const deleteEmployeeRequest = async (id) =>
   axios.delete(`${API}/employees/${id}`, id);
