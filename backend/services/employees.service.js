@@ -2,7 +2,10 @@ const boom = require('@hapi/boom');
 const { models } = require('./../libs/sequelize');
 
 class EmployeeService {
-  constructor() {}
+  constructor() {
+    this.employees = [];
+    // this.generate();
+  }
   async create(data) {
     const newEmployee = await models.Employee.create(data);
     return newEmployee;
@@ -29,9 +32,16 @@ class EmployeeService {
     return employee;
   }
   async update(id, changes) {
-    return { id, changes };
+    const user = await this.findOne(id);
+    const rta = await user.update(changes);
+    return rta;
   }
   async delete(id) {
+    const index = await models.Employee.findIndex((item) => item.id === id);
+    if (index === -1) {
+      throw boom.notFound('Employee not found');
+    }
+    models.Employee.slice(index, 1);
     return { id };
   }
 }

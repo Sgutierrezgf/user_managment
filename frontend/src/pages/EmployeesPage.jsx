@@ -4,7 +4,7 @@ import Pagination from "../components/Pagination";
 import { useNavigate } from "react-router-dom";
 
 function EmployeesPage() {
-  const { employees } = useAuth();
+  const { employees, deleteEmployee } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const employeesPerPage = 5;
@@ -26,10 +26,22 @@ function EmployeesPage() {
     setCurrentPage(1); // Reset pagination to first page when searching
   };
 
+  const handleURequestsEmployee = (id) => {
+    navigate(`/employee/requests-employee/${id}`);
+  };
+
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleAddEmployee = () => {
     navigate("/employee/add-employee");
+  };
+
+  const handleUpdateEmployee = (id) => {
+    navigate(`/employee/update-employee/${id}`);
+  };
+
+  const handleDeleteEmployee = (id) => {
+    deleteEmployee(id);
   };
 
   return (
@@ -70,7 +82,29 @@ function EmployeesPage() {
               </td>
               <td className="px-4 py-2">{employee.Nombre}</td>
               <td className="px-4 py-2">{employee.Salario}</td>
-              <td className="px-4 py-2"></td>
+              <td className="px-4 py-2">
+                <button
+                  onClick={() => handleURequestsEmployee(employee.id)}
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mr-2 rounded"
+                >
+                  Ver
+                </button>
+              </td>
+
+              <td className="px-4 py-2">
+                <button
+                  onClick={() => handleUpdateEmployee(employee.id)}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-2 rounded"
+                >
+                  Actualizar
+                </button>
+                <button
+                  onClick={() => handleDeleteEmployee(employee.id)}
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Eliminar
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

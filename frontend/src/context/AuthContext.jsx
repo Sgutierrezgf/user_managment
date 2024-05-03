@@ -54,6 +54,7 @@ export const AuthProvider = ({ children }) => {
     const fetchEmployeesData = async () => {
       try {
         const employeesData = await getEmployees();
+
         setEmployees(employeesData.data);
       } catch (error) {
         console.error(error);
@@ -62,7 +63,6 @@ export const AuthProvider = ({ children }) => {
 
     fetchEmployeesData();
   }, []);
-
   const addNewEmployee = async (employee) => {
     try {
       const res = await addEmployee(employee);
@@ -76,20 +76,28 @@ export const AuthProvider = ({ children }) => {
   const deleteEmployee = async (id) => {
     try {
       const res = await deleteEmployeeRequest(id);
-      if (res.status === 204)
-        setEmployee(employee.filter((emp) => emp.id !== id));
+      if (res.status === 204) {
+        setEmployees(employees.filter((emp) => emp.id !== id));
+      } else {
+        console.error("Error al eliminar empleado:", res.status);
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error al eliminar empleado:", error);
     }
   };
-  const updateEmployees = async (id, employee) => {
+
+  const updateEmployees = async (id, updatedEmployeeData) => {
     try {
-      await updateEmployee(id, employee);
+      await updateEmployee(id, updatedEmployeeData);
+      setEmployees(
+        employees.map((emp) =>
+          emp.id === id ? { ...emp, ...updatedEmployeeData } : emp
+        )
+      );
     } catch (error) {
       console.error(error);
     }
   };
-
   return (
     <AuthContext.Provider
       value={{
