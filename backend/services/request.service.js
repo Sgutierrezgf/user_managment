@@ -33,16 +33,9 @@ class RequestService {
   }
 
   async update(id, changes) {
-    const index = this.requests.findIndex((item) => item.id === id);
-    if (index === -1) {
-      throw boom.notFound('request not found');
-    }
-    const request = this.requests[index];
-    this.requests[index] = {
-      ...request,
-      ...changes,
-    };
-    return this.requests[index];
+    const user = await this.findOne(id);
+    const rta = await user.update(changes);
+    return rta;
   }
 
   async delete(id) {

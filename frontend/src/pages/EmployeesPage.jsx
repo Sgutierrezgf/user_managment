@@ -4,11 +4,13 @@ import Pagination from "../components/Pagination";
 import { useNavigate } from "react-router-dom";
 
 function EmployeesPage() {
-  const { employees, deleteEmployee } = useAuth();
+  const { user, employees, deleteEmployee } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const employeesPerPage = 5;
   const navigate = useNavigate();
+
+  const isAdmin = user.user.role && user.user.role === "admin";
 
   const filteredEmployees = employees.filter((employee) =>
     employee.Nombre.toLowerCase().includes(searchTerm.toLowerCase())
@@ -26,11 +28,11 @@ function EmployeesPage() {
     setCurrentPage(1); // Reset pagination to first page when searching
   };
 
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   const handleURequestsEmployee = (id) => {
     navigate(`/employee/requests-employee/${id}`);
   };
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleAddEmployee = () => {
     navigate("/employee/add-employee");
@@ -68,7 +70,8 @@ function EmployeesPage() {
             <th className="px-4 py-2">Fecha Ingreso</th>
             <th className="px-4 py-2">Nombre</th>
             <th className="px-4 py-2">Salario</th>
-            <th className="px-4 py-2">Acciones</th>
+            <th className="px-4 py-2">Solicitudes</th>
+            {isAdmin && <th className="px-4 py-2">Acciones</th>}
           </tr>
         </thead>
         <tbody>
@@ -90,21 +93,24 @@ function EmployeesPage() {
                   Ver
                 </button>
               </td>
-
-              <td className="px-4 py-2">
-                <button
-                  onClick={() => handleUpdateEmployee(employee.id)}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-2 rounded"
-                >
-                  Actualizar
-                </button>
-                <button
-                  onClick={() => handleDeleteEmployee(employee.id)}
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Eliminar
-                </button>
-              </td>
+              {isAdmin && (
+                <td className="px-4 py-2">
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => handleUpdateEmployee(employee.id)}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-2 rounded"
+                    >
+                      Actualizar
+                    </button>
+                    <button
+                      onClick={() => handleDeleteEmployee(employee.id)}
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

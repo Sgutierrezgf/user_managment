@@ -8,6 +8,7 @@ import {
   updateEmployee,
   deleteEmployeeRequest,
   getEmployees,
+  addRequests,
   // verifyTokenRequest,
 } from "../api/auth";
 // import Cookies from "js-cookie";
@@ -27,6 +28,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [employee, setEmployee] = useState(null);
   const [employees, setEmployees] = useState([]);
+  const [request, setRequest] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [errors, setErrors] = useState([]);
 
@@ -63,10 +65,21 @@ export const AuthProvider = ({ children }) => {
 
     fetchEmployeesData();
   }, []);
+
   const addNewEmployee = async (employee) => {
     try {
       const res = await addEmployee(employee);
       setEmployee(res.data);
+      setIsAuthenticated(true);
+    } catch (error) {
+      setErrors(error.response.data);
+    }
+  };
+
+  const addNewRequest = async (request) => {
+    try {
+      const res = await addRequests(request);
+      setRequest(res.data);
       setIsAuthenticated(true);
     } catch (error) {
       setErrors(error.response.data);
@@ -109,6 +122,8 @@ export const AuthProvider = ({ children }) => {
         addNewEmployee,
         employee,
         employees,
+        addNewRequest,
+        request,
         deleteEmployee,
         updateEmployees,
       }}

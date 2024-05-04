@@ -12,3 +12,5 @@ export const updateEmployee = async (id, updatedEmployeeData) =>
 export const getEmployees = () => axios.get(`${API}/employees`);
 export const deleteEmployeeRequest = async (id) =>
   axios.delete(`${API}/employees/${id}`, id);
+export const getRequests = () => axios.get(`${API}/requests`);
+export const addRequests = (request) => axios.post(`${API}/requests`, request);

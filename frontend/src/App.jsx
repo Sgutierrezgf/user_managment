@@ -8,6 +8,7 @@ import { ProtectedRoute } from "./Routes";
 import AddEmployee from "./pages/AddEmployee";
 import UpdateEmployeePage from "./pages/UpdateEmployeePage";
 import RequestsPage from "./pages/RequestsPage";
+import AddRequest from "./pages/AddRequest";
 
 function App() {
   return (
@@ -28,6 +29,10 @@ function App() {
             <Route
               path="/employee/requests-employee/:id"
               element={<RequestsPage />}
+            />
+            <Route
+              path="/employee/requests-employee/:id/add-request"
+              element={<AddRequest />}
             />
           </Route>
         </Routes>
