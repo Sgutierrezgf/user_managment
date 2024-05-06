@@ -2,15 +2,16 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import Pagination from "../components/Pagination";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 function EmployeesPage() {
-  const { user, employees, deleteEmployee } = useAuth();
+  const { employees, deleteEmployee, isAdmin } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const employeesPerPage = 5;
   const navigate = useNavigate();
 
-  const isAdmin = user.user.role && user.user.role === "admin";
+  // const isAdmin = user && user.user && user.user.role === "admin";
 
   const filteredEmployees = employees.filter((employee) =>
     employee.Nombre.toLowerCase().includes(searchTerm.toLowerCase())
@@ -48,7 +49,7 @@ function EmployeesPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-4">Información del empleado</h1>
+      <Navbar />
       <div>
         <input
           type="text"

@@ -9,9 +9,8 @@ import {
   deleteEmployeeRequest,
   getEmployees,
   addRequests,
-  // verifyTokenRequest,
 } from "../api/auth";
-// import Cookies from "js-cookie";
+import Cookies from "js-cookie";
 
 export const AuthContext = createContext();
 
@@ -31,12 +30,39 @@ export const AuthProvider = ({ children }) => {
   const [request, setRequest] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [errors, setErrors] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+  // const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const token = Cookies.get("authToken");
+    if (token) {
+      setIsAuthenticated(true);
+      // Restore isAdmin state from cookies
+      const isAdminCookie = Cookies.get("isAdmin");
+      if (isAdminCookie === "true") {
+        setIsAdmin(true);
+      }
+      return;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user && user.user && user.user.role === "admin") {
+      setIsAdmin(true);
+      // Save isAdmin state to cookies
+      Cookies.set("isAdmin", true);
+    } else {
+      setIsAdmin(false);
+      // Remove isAdmin state from cookies
+      Cookies.remove("isAdmin");
+    }
+  }, [user]);
   const signup = async (user) => {
     try {
       const res = await registerRequest(user);
       setUser(res.data);
       setIsAuthenticated(true);
+      Cookies.set("authToken", res.data.token);
     } catch (error) {
       setErrors(error.response.data);
     }
@@ -47,9 +73,18 @@ export const AuthProvider = ({ children }) => {
       const res = await loginRequest(user);
       setUser(res.data);
       setIsAuthenticated(true);
+      Cookies.set("authToken", res.data.token);
     } catch (error) {
       setErrors(error.response.data);
     }
+  };
+  // console.log(user);
+
+  const logout = () => {
+    // Eliminar el token de autenticación de las cookies al cerrar sesión
+    Cookies.remove("authToken");
+    setUser(null);
+    setIsAuthenticated(false);
   };
 
   useEffect(() => {
@@ -126,6 +161,9 @@ export const AuthProvider = ({ children }) => {
         request,
         deleteEmployee,
         updateEmployees,
+        logout,
+        isAdmin,
+        // loading,
       }}
     >
       {children}

@@ -7,7 +7,9 @@ const {
   createUserSchema,
   getUserSchema,
 } = require('./../schemas/user.schema');
-
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const { config } = require('./../config/config');
 const router = express.Router();
 const service = new UserService();
 
@@ -35,12 +37,51 @@ router.get(
 );
 
 router.post(
-  '/',
+  '/auth/login',
+  passport.authenticate('local', { session: false }),
+  async (req, res, next) => {
+    try {
+      const user = req.user;
+      const payload = {
+        sub: user.id,
+        role: user.role,
+      };
+      const token = jwt.sign(payload, config.jwtSecret);
+
+      // Establecer la cookie con el token
+      res.cookie('token', token, { httpOnly: true });
+
+      // Establecer una cookie adicional para indicar si el usuario es un administrador
+      res.cookie('isAdmin', user.role === 'admin', { httpOnly: true });
+
+      res.json({
+        user,
+        token,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/register',
   validatorHandler(createUserSchema, 'body'),
   async (req, res, next) => {
     try {
       const body = req.body;
       const newUser = await service.create(body);
+      const payload = {
+        sub: newUser.id,
+        role: newUser.role,
+      };
+      const token = jwt.sign(payload, config.jwtSecret);
+
+      res.cookie('token', token, { httpOnly: true });
+
+      // Establecer una cookie adicional para indicar si el usuario es un administrador
+      res.cookie('isAdmin', newUser.role === 'admin', { httpOnly: true });
+
       res.status(201).json(newUser);
     } catch (error) {
       next(error);

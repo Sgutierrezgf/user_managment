@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const EmployeeService = require('./../services/employees.service');
 const validatorHandler = require('./../middlewares/validator.handler');
-const { checkAdminRole } = require('./../middlewares/auth.handler');
+
 const {
   updateEmployeeSchema,
   createEmployeeSchema,

@@ -2,9 +2,10 @@ import axios from "./axios";
 
 const API = "http://localhost:3000/api/v1";
 
-export const registerRequest = (user) => axios.post(`${API}/users`, user);
-export const loginRequest = (user) => axios.post(`${API}/auth/login`, user);
-export const verifyTokenRequest = () => axios.get(`${API}/auth/verify`);
+export const registerRequest = (user) =>
+  axios.post(`${API}/users/register`, user);
+export const loginRequest = (user) =>
+  axios.post(`${API}/users/auth/login`, user);
 export const addEmployee = (employee) =>
   axios.post(`${API}/employees`, employee);
 export const updateEmployee = async (id, updatedEmployeeData) =>

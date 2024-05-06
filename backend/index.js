@@ -1,7 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const routerApi = require('./routes');
-const { checkApiKey } = require('./middlewares/auth.handler');
+const {
+  checkApiKey,
+  authenticateToken,
+} = require('./middlewares/auth.handler');
+const cookieParser = require('cookie-parser');
 
 const {
   logErrors,
@@ -14,6 +18,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(cookieParser());
 
 const whitelist = [
   'http://localhost:8080',
