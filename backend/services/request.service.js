@@ -7,7 +7,7 @@ class RequestService {
     this.generate();
   }
 
-  generate() {}
+  generate() { }
 
   async create(data) {
     const newRequest = await models.Request.create(data);
@@ -22,7 +22,7 @@ class RequestService {
   }
 
   async findOne(id) {
-    const request = this.requests.find((item) => item.id === id);
+    const request = await models.Request.findByPk(id, { include: ['employee'] })
     if (!request) {
       throw boom.notFound('request not found');
     }
@@ -39,12 +39,16 @@ class RequestService {
   }
 
   async delete(id) {
-    const index = this.requests.findIndex((item) => item.id === id);
-    if (index === -1) {
-      throw boom.notFound('request not found');
+    const exists = await models.Request.findByPk(id);
+    if (!exists) {
+      throw boom.notFound('Request not found');
     }
-    this.requests.splice(index, 1);
-    return { id };
+    await models.Request.destroy({
+      where: {
+        id,
+      }
+    })
+    return;
   }
 }
 

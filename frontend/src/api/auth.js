@@ -14,4 +14,7 @@ export const getEmployees = () => axios.get(`${API}/employees`);
 export const deleteEmployeeRequest = async (id) =>
   axios.delete(`${API}/employees/${id}`, id);
 export const getRequests = () => axios.get(`${API}/requests`);
+export const deleteEmployeeRequests = async (id) =>
+  axios.delete(`${API}/requests/${id}`, id);
 export const addRequests = (request) => axios.post(`${API}/requests`, request);
+

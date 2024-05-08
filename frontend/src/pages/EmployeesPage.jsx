@@ -1,17 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import Pagination from "../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 function EmployeesPage() {
-  const { employees, deleteEmployee, isAdmin } = useAuth();
+  const { user, employees, deleteEmployee } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [users, setUsers] = useState(null)
   const employeesPerPage = 5;
   const navigate = useNavigate();
 
-  // const isAdmin = user && user.user && user.user.role === "admin";
+  // Guardar la información del usuario en localStorage cuando se actualiza
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUsers(parsedUser.user.role)
+    }
+  }, []);
+
+
+  const isAdmin = users === 'admin'
 
   const filteredEmployees = employees.filter((employee) =>
     employee.Nombre.toLowerCase().includes(searchTerm.toLowerCase())
@@ -59,12 +76,14 @@ function EmployeesPage() {
           className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md my-2"
         />
       </div>
+
       <button
         onClick={handleAddEmployee}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-2/3"
       >
         Agregar Empleado
       </button>
+
       <table className="table-auto w-full">
         <thead>
           <tr>
@@ -72,7 +91,10 @@ function EmployeesPage() {
             <th className="px-4 py-2">Nombre</th>
             <th className="px-4 py-2">Salario</th>
             <th className="px-4 py-2">Solicitudes</th>
-            {isAdmin && <th className="px-4 py-2">Acciones</th>}
+            {isAdmin && (
+              <th className="px-4 py-2">Acciones</th>
+
+            )}
           </tr>
         </thead>
         <tbody>
@@ -94,8 +116,8 @@ function EmployeesPage() {
                   Ver
                 </button>
               </td>
-              {isAdmin && (
-                <td className="px-4 py-2">
+              <td className="px-4 py-2">
+                {isAdmin && (
                   <div className="flex justify-center">
                     <button
                       onClick={() => handleUpdateEmployee(employee.id)}
@@ -109,9 +131,10 @@ function EmployeesPage() {
                     >
                       Eliminar
                     </button>
+
                   </div>
-                </td>
-              )}
+                )}
+              </td>
             </tr>
           ))}
         </tbody>

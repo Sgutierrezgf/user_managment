@@ -79,7 +79,7 @@ router.delete(
     try {
       const { id } = req.params;
       await employee.delete(id);
-      res.status(201).json({ id });
+      res.status(202).send('el usuario ha sido eliminado');
     } catch (error) {
       next(error);
     }

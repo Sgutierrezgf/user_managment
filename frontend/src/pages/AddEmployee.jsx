@@ -31,6 +31,10 @@ function AddEmployee() {
     navigate("/employees");
   };
 
+  const handleReturn = () =>{
+    navigate("/employees");
+  }
+
   return (
     <div className="flex h-[calc(100hv-100px)] items-center justify-center">
       <div className="bg-zinc-800 max-w-md w-full p-10 rounded-md">
@@ -61,7 +65,7 @@ function AddEmployee() {
           {errors.Salario && (
             <p className="text-red-500">Salario is required</p>
           )}
-          <button type="submit" disabled={loading}>
+          <button type="submit" disabled={loading} className="text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
             {loading ? (
               <div
                 className="inline-block h-8 w-8 animate-[spinner-grow_0.75s_linear_infinite] rounded-full bg-current align-[-0.125em] text-warning opacity-0 motion-reduce:animate-[spinner-grow_1.5s_linear_infinite]"
@@ -73,6 +77,20 @@ function AddEmployee() {
               </div>
             ) : (
               "Agregar empleado"
+            )}
+          </button>
+          <button type="submit" onClick={handleReturn} className="text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+            {loading ? (
+              <div
+                className="inline-block h-8 w-8 animate-[spinner-grow_0.75s_linear_infinite] rounded-full bg-current align-[-0.125em] text-warning opacity-0 motion-reduce:animate-[spinner-grow_1.5s_linear_infinite]"
+                role="status"
+              >
+                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                  Loading...
+                </span>
+              </div>
+            ) : (
+              "Regresar a empleados"
             )}
           </button>
         </form>

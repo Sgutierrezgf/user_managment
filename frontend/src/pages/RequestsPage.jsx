@@ -6,7 +6,7 @@ import Pagination from "../components/Pagination";
 function RequestsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { employees } = useAuth();
+  const { employees, deleteRequest } = useAuth();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,6 +46,10 @@ function RequestsPage() {
     navigate(`/employee/requests-employee/${id}/add-request`);
   };
 
+  const handleDeleteRequest = (id) => {
+    deleteRequest(id);
+  }
+
   return (
     <div className="bg-zinc-800 w-full p-10 rounded-md">
       <h1 className="text-2xl font-bold">Información del empleado</h1>
@@ -78,6 +82,10 @@ function RequestsPage() {
               <th className="px-4 py-2 w-1/3">Codigo</th>
               <th className="px-4 py-2 w-1/3">Descripción</th>
               <th className="px-4 py-2 w-1/3">Resumen</th>
+
+              <th className="px-4 py-2">Acciones</th>
+
+
             </tr>
           </thead>
           <tbody>
@@ -89,6 +97,25 @@ function RequestsPage() {
                 <td className="px-4 py-2">{request.codigo}</td>
                 <td className="px-4 py-2">{request.descripcion}</td>
                 <td className="px-4 py-2">{request.resumen}</td>
+                <td className="px-4 py-2">
+
+                  <div className="flex justify-center">
+                    <button
+
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-2 rounded"
+                    >
+                      Actualizar
+                    </button>
+                    <button
+                      onClick={() => handleDeleteRequest(request.id)}
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Eliminar
+                    </button>
+
+                  </div>
+
+                </td>
               </tr>
             ))}
           </tbody>

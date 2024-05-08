@@ -37,12 +37,16 @@ class EmployeeService {
     return rta;
   }
   async delete(id) {
-    const index = await models.Employee.findIndex((item) => item.id === id);
-    if (index === -1) {
+    const exists = await models.Employee.findByPk(id);
+    if (!exists) {
       throw boom.notFound('Employee not found');
     }
-    models.Employee.slice(index, 1);
-    return { id };
+    await models.Employee.destroy({
+      where: {
+        id,
+      }
+    })
+    return;
   }
 }
 module.exports = EmployeeService;

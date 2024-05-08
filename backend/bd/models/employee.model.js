@@ -23,7 +23,7 @@ const EmployeeSchema = {
 };
 class Employee extends Model {
   static associate(models) {
-    this.hasMany(models.Request, { as: 'requests', foreignKey: 'employeeId' });
+    this.hasMany(models.Request, { as: 'requests', foreignKey: 'employeeId', onDelete: 'CASCADE', hooks: true });
   }
   static config(sequelize) {
     return {
@@ -31,6 +31,7 @@ class Employee extends Model {
       tableName: EMPLOYEE_TABLE,
       modelName: 'Employee',
       timestamps: false,
+
     };
   }
 }

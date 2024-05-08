@@ -48,12 +48,7 @@ router.post(
       };
       const token = jwt.sign(payload, config.jwtSecret);
 
-      // Establecer la cookie con el token
       res.cookie('token', token, { httpOnly: true });
-
-      // Establecer una cookie adicional para indicar si el usuario es un administrador
-      res.cookie('isAdmin', user.role === 'admin', { httpOnly: true });
-
       res.json({
         user,
         token,
@@ -76,11 +71,8 @@ router.post(
         role: newUser.role,
       };
       const token = jwt.sign(payload, config.jwtSecret);
-
+      console.log(token);
       res.cookie('token', token, { httpOnly: true });
-
-      // Establecer una cookie adicional para indicar si el usuario es un administrador
-      res.cookie('isAdmin', newUser.role === 'admin', { httpOnly: true });
 
       res.status(201).json(newUser);
     } catch (error) {

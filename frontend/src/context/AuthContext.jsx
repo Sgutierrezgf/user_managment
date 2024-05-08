@@ -7,8 +7,10 @@ import {
   addEmployee,
   updateEmployee,
   deleteEmployeeRequest,
+  deleteEmployeeRequests,
   getEmployees,
   addRequests,
+  getRequests
 } from "../api/auth";
 import Cookies from "js-cookie";
 
@@ -27,10 +29,11 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [employee, setEmployee] = useState(null);
   const [employees, setEmployees] = useState([]);
+  const [requests, setRequests] = useState([]);
   const [request, setRequest] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [errors, setErrors] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false);
+  // const [isAdmin, setIsAdmin] = useState(false);
   // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,29 +41,14 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       setIsAuthenticated(true);
       // Restore isAdmin state from cookies
-      const isAdminCookie = Cookies.get("isAdmin");
-      if (isAdminCookie === "true") {
-        setIsAdmin(true);
-      }
       return;
     }
   }, []);
 
-  useEffect(() => {
-    if (user && user.user && user.user.role === "admin") {
-      setIsAdmin(true);
-      // Save isAdmin state to cookies
-      Cookies.set("isAdmin", true);
-    } else {
-      setIsAdmin(false);
-      // Remove isAdmin state from cookies
-      Cookies.remove("isAdmin");
-    }
-  }, [user]);
   const signup = async (user) => {
     try {
       const res = await registerRequest(user);
-      setUser(res.data);
+      setUser(res.data.user); // Asumiendo que el token está en res.data.user
       setIsAuthenticated(true);
       Cookies.set("authToken", res.data.token);
     } catch (error) {
@@ -79,14 +67,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
   // console.log(user);
-
   const logout = () => {
     // Eliminar el token de autenticación de las cookies al cerrar sesión
     Cookies.remove("authToken");
+
+    // Limpiar el localStorage
+    localStorage.removeItem("user");
+
+    // Limpiar el estado del usuario y la autenticación
     setUser(null);
     setIsAuthenticated(false);
   };
-
   useEffect(() => {
     const fetchEmployeesData = async () => {
       try {
@@ -101,21 +92,39 @@ export const AuthProvider = ({ children }) => {
     fetchEmployeesData();
   }, []);
 
+  useEffect(() => {
+    const fetchRequestData = async () => {
+      try {
+        const requestData = await getRequests();
+
+        setRequest(requestData.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchRequestData();
+  }, []);
+
+
   const addNewEmployee = async (employee) => {
     try {
       const res = await addEmployee(employee);
       setEmployee(res.data);
       setIsAuthenticated(true);
+      setEmployees([...employees, res.data]);
     } catch (error) {
       setErrors(error.response.data);
     }
   };
 
-  const addNewRequest = async (request) => {
+  const addNewRequest = async (solicitudes) => {
     try {
-      const res = await addRequests(request);
-      setRequest(res.data);
+      const res = await addRequests(solicitudes);
+      setRequests(res.data);
       setIsAuthenticated(true);
+      setRequests([...requests, res.data]);
+      console.log(requests);
     } catch (error) {
       setErrors(error.response.data);
     }
@@ -133,6 +142,21 @@ export const AuthProvider = ({ children }) => {
       console.error("Error al eliminar empleado:", error);
     }
   };
+
+  const deleteRequest = async (id) => {
+    try {
+      const res = await deleteEmployeeRequests(id);
+      console.log(id);
+      if (res.status === 204) {
+        setEmployees(requests.filter((req) => req.id !== id));
+      } else {
+        console.error("Error al eliminar empleado:", res.status);
+      }
+    } catch (error) {
+      console.error("Error al eliminar empleado:", error);
+    }
+  };
+
 
   const updateEmployees = async (id, updatedEmployeeData) => {
     try {
@@ -158,11 +182,13 @@ export const AuthProvider = ({ children }) => {
         employee,
         employees,
         addNewRequest,
+        requests,
         request,
         deleteEmployee,
         updateEmployees,
         logout,
-        isAdmin,
+        deleteRequest
+        // isAdmin,
         // loading,
       }}
     >
