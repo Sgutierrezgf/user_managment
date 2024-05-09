@@ -25,21 +25,21 @@ function RegisterPage() {
   });
 
   return (
-    <div className="flex h-[calc(100hv-100px)] items-center justify-center">
-      <div className="bg-zinc-800 max-w-md w-full p-10 rounded-md">
-        <h1 className="text-2xl font-bold">Register</h1>
-        <form onSubmit={onSubmit}>
+    <div className="flex  items-center justify-center">
+      <div className="bg-zinc-800 max-w-md w-full p-6 lg:p-10 rounded-md">
+        <h1 className="text-2xl lg:text-3xl font-bold mb-4">Registro</h1>
+        <form onSubmit={onSubmit} className="space-y-4">
           <input
             type="email"
             {...register("email", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md my-2"
+            className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md"
             placeholder="example@example.com"
           />
           {errors.email && <p className="text-red-500">Email is required</p>}
           <input
             type="password"
             {...register("password", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md my-2"
+            className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md"
             placeholder="Password"
           />
           {errors.password && (
@@ -48,11 +48,16 @@ function RegisterPage() {
           <input
             type="text"
             {...register("role", { required: true })}
-            className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md my-2"
+            className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md"
             placeholder="Role"
           />
           {errors.role && <p className="text-red-500">Role is required</p>}
-          <button className="text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800" type="submit">Register</button>
+          <button
+            type="submit"
+            className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg py-2 text-sm transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300"
+          >
+            Registro
+          </button>
         </form>
       </div>
     </div>

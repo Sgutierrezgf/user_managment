@@ -79,13 +79,10 @@ function RequestsPage() {
 
 
   return (
-    <div className="bg-zinc-800 w-full p-10 rounded-md">
-      <h1 className="text-2xl font-bold">Información del empleado</h1>
+    <div className="bg-zinc-800 w-full max-w-md mx-auto p-6 lg:p-10 rounded-md">
+      <h1 className="text-2xl lg:text-3xl font-bold mb-4">Información del empleado</h1>
       <p>Nombre: {selectedEmployee ? selectedEmployee.employee.Nombre : ""}</p>
-      <p>
-        Fecha de Ingreso:{" "}
-        {selectedEmployee ? selectedEmployee.employee.FechaIngreso.slice(0, 10) : ""}
-      </p>
+      <p>Fecha de Ingreso: {selectedEmployee ? selectedEmployee.employee.FechaIngreso.slice(0, 10) : ""}</p>
       <p>Salario: {selectedEmployee ? selectedEmployee.employee.Salario : ""}</p>
       <div>
         <input
@@ -98,7 +95,7 @@ function RequestsPage() {
       </div>
       <button
         onClick={handleAddRequest}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-2/3"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-2/3 mt-4"
       >
         Agregar nueva solicitud
       </button>
@@ -110,43 +107,33 @@ function RequestsPage() {
               <th className="px-4 py-2 w-1/3">Codigo</th>
               <th className="px-4 py-2 w-1/3">Descripción</th>
               <th className="px-4 py-2 w-1/3">Resumen</th>
-              {
-                isAdmin && (
-                  <th className="px-4 py-2">Acciones</th>
-                )
-              }
+              {isAdmin && <th className="px-4 py-2">Acciones</th>}
             </tr>
           </thead>
           <tbody>
             {currentRequests.map((request) => (
-              <tr
-                key={request.id}
-                className="border-b border-gray-200 text-center"
-              >
+              <tr key={request.id} className="border-b border-gray-200 text-center">
                 <td className="px-4 py-2">{request.codigo}</td>
                 <td className="px-4 py-2">{request.descripcion}</td>
                 <td className="px-4 py-2">{request.resumen}</td>
-                {
-                  isAdmin && (
-                    <td className="px-4 py-2">
-                      <div className="flex justify-center">
-                        <button
-                          onClick={() => handleUpdateRequest(request.id)}
-                          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-2 rounded"
-                        >
-                          Actualizar
-                        </button>
-                        <button
-                          onClick={() => handleDeleteRequest(request.id)}
-                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                        >
-                          Eliminar
-                        </button>
-                      </div>
-                    </td>
-                  )
-                }
-
+                {isAdmin && (
+                  <td className="px-4 py-2">
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => handleUpdateRequest(request.id)}
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-2 rounded"
+                      >
+                        Actualizar
+                      </button>
+                      <button
+                        onClick={() => handleDeleteRequest(request.id)}
+                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
@@ -164,6 +151,7 @@ function RequestsPage() {
         Regresar a empleados
       </button>
     </div>
+
   );
 }
 
