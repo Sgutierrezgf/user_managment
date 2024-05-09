@@ -11,6 +11,7 @@ const AddEmployee = lazy(() => import("./pages/AddEmployee"));
 const UpdateEmployeePage = lazy(() => import("./pages/UpdateEmployeePage"));
 const RequestsPage = lazy(() => import("./pages/RequestsPage"));
 const AddRequest = lazy(() => import("./pages/AddRequest"));
+const UpdateRequest = lazy(() => import("./pages/UpdateRequest"));
 
 function App() {
   return (
@@ -36,6 +37,10 @@ function App() {
               <Route
                 path="/employee/requests-employee/:id/add-request"
                 element={<AddRequest />}
+              />
+              <Route
+                path="/employee/requests-employee/:id/update-request"
+                element={<UpdateRequest />}
               />
             </Route>
           </Routes>

@@ -6,18 +6,37 @@ import Pagination from "../components/Pagination";
 function RequestsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { employees, deleteRequest } = useAuth();
+  const { requests, deleteRequest, user } = useAuth();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [users, setUsers] = useState(null)
   const [currentPage, setCurrentPage] = useState(1);
-  const requestsPerPage = 5;
+  const requestsPerPage = 5; // Define the number of requests per page
 
   useEffect(() => {
-    const employeeToUpdate = employees.find(
-      (employee) => employee.id === parseInt(id)
+    const employeeToUpdate = requests.find(
+      (req) => req.employeeId === parseInt(id)
     );
     setSelectedEmployee(employeeToUpdate);
-  }, [id, employees]);
+  }, [id, requests]);
+
+  // Guardar la información del usuario en localStorage cuando se actualiza
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUsers(parsedUser.user.role)
+    }
+  }, []);
+
+
+  const isAdmin = users === 'admin'
 
   const handleReturnEmployees = () => {
     navigate("/employees");
@@ -30,35 +49,44 @@ function RequestsPage() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Filtrar las solicitudes por término de búsqueda y paginar
-  const filteredRequests =
-    selectedEmployee?.requests.filter((request) =>
-      request.codigo.toLowerCase().includes(searchTerm.toLowerCase())
-    ) || [];
+  // Filter requests by employee ID and search term
+  const filteredRequests = requests.filter((request) =>
+    request.employeeId === parseInt(id) &&
+    request.codigo.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Pagination
   const indexOfLastRequest = currentPage * requestsPerPage;
   const indexOfFirstRequest = indexOfLastRequest - requestsPerPage;
   const currentRequests = filteredRequests.slice(
     indexOfFirstRequest,
     indexOfLastRequest
   );
+  const handleDeleteRequest = async (id) => {
+    try {
+      await deleteRequest(id);
+    } catch (error) {
+      console.error("Error al eliminar solicitud:", error);
+    }
+  };
 
   const handleAddRequest = () => {
     navigate(`/employee/requests-employee/${id}/add-request`);
   };
+  const handleUpdateRequest = (id) => {
+    navigate(`/employee/requests-employee/${id}/update-request`);
+  };
 
-  const handleDeleteRequest = (id) => {
-    deleteRequest(id);
-  }
 
   return (
     <div className="bg-zinc-800 w-full p-10 rounded-md">
       <h1 className="text-2xl font-bold">Información del empleado</h1>
-      <p>Nombre: {selectedEmployee ? selectedEmployee.Nombre : ""}</p>
+      <p>Nombre: {selectedEmployee ? selectedEmployee.employee.Nombre : ""}</p>
       <p>
         Fecha de Ingreso:{" "}
-        {selectedEmployee ? selectedEmployee.FechaIngreso.slice(0, 10) : ""}
+        {selectedEmployee ? selectedEmployee.employee.FechaIngreso.slice(0, 10) : ""}
       </p>
-      <p>Salario: {selectedEmployee ? selectedEmployee.Salario : ""}</p>
+      <p>Salario: {selectedEmployee ? selectedEmployee.employee.Salario : ""}</p>
       <div>
         <input
           type="text"
@@ -82,10 +110,11 @@ function RequestsPage() {
               <th className="px-4 py-2 w-1/3">Codigo</th>
               <th className="px-4 py-2 w-1/3">Descripción</th>
               <th className="px-4 py-2 w-1/3">Resumen</th>
-
-              <th className="px-4 py-2">Acciones</th>
-
-
+              {
+                isAdmin && (
+                  <th className="px-4 py-2">Acciones</th>
+                )
+              }
             </tr>
           </thead>
           <tbody>
@@ -97,25 +126,27 @@ function RequestsPage() {
                 <td className="px-4 py-2">{request.codigo}</td>
                 <td className="px-4 py-2">{request.descripcion}</td>
                 <td className="px-4 py-2">{request.resumen}</td>
-                <td className="px-4 py-2">
+                {
+                  isAdmin && (
+                    <td className="px-4 py-2">
+                      <div className="flex justify-center">
+                        <button
+                          onClick={() => handleUpdateRequest(request.id)}
+                          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-2 rounded"
+                        >
+                          Actualizar
+                        </button>
+                        <button
+                          onClick={() => handleDeleteRequest(request.id)}
+                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  )
+                }
 
-                  <div className="flex justify-center">
-                    <button
-
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-2 rounded"
-                    >
-                      Actualizar
-                    </button>
-                    <button
-                      onClick={() => handleDeleteRequest(request.id)}
-                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                    >
-                      Eliminar
-                    </button>
-
-                  </div>
-
-                </td>
               </tr>
             ))}
           </tbody>

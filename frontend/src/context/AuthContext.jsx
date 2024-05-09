@@ -10,7 +10,8 @@ import {
   deleteEmployeeRequests,
   getEmployees,
   addRequests,
-  getRequests
+  getRequests,
+  updateRequests
 } from "../api/auth";
 import Cookies from "js-cookie";
 
@@ -30,7 +31,6 @@ export const AuthProvider = ({ children }) => {
   const [employee, setEmployee] = useState(null);
   const [employees, setEmployees] = useState([]);
   const [requests, setRequests] = useState([]);
-  const [request, setRequest] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [errors, setErrors] = useState([]);
   // const [isAdmin, setIsAdmin] = useState(false);
@@ -96,16 +96,13 @@ export const AuthProvider = ({ children }) => {
     const fetchRequestData = async () => {
       try {
         const requestData = await getRequests();
-
-        setRequest(requestData.data);
+        setRequests(requestData.data);
       } catch (error) {
         console.error(error);
       }
     };
-
     fetchRequestData();
   }, []);
-
 
   const addNewEmployee = async (employee) => {
     try {
@@ -146,14 +143,17 @@ export const AuthProvider = ({ children }) => {
   const deleteRequest = async (id) => {
     try {
       const res = await deleteEmployeeRequests(id);
-      console.log(id);
       if (res.status === 204) {
-        setEmployees(requests.filter((req) => req.id !== id));
+        // Filter out the deleted request from the local state
+        const updatedRequests = requests.filter((req) => req.id !== id);
+        // Update the requests state in the AuthProvider
+        setRequests([...requests, updatedRequests]);
       } else {
-        console.error("Error al eliminar empleado:", res.status);
+        console.error("Error al eliminar solicitud:", res.status);
       }
     } catch (error) {
-      console.error("Error al eliminar empleado:", error);
+      console.error("Error al eliminar solicitud:", error);
+      throw error;
     }
   };
 
@@ -166,6 +166,19 @@ export const AuthProvider = ({ children }) => {
           emp.id === id ? { ...emp, ...updatedEmployeeData } : emp
         )
       );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateRequest = async (id, updatedRequestData) => {
+    try {
+      await updateRequests(id, updatedRequestData);
+      // Actualiza la solicitud en el estado local
+      const updatedRequests = requests.map((req) =>
+        req.id === id ? { ...req, ...updatedRequestData } : req
+      );
+      setRequests(updatedRequests); // Actualiza la lista de solicitudes local
     } catch (error) {
       console.error(error);
     }
@@ -183,12 +196,11 @@ export const AuthProvider = ({ children }) => {
         employees,
         addNewRequest,
         requests,
-        request,
         deleteEmployee,
         updateEmployees,
         logout,
-        deleteRequest
-        // isAdmin,
+        deleteRequest,
+        updateRequest
         // loading,
       }}
     >

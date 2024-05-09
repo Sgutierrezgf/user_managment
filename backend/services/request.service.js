@@ -23,6 +23,7 @@ class RequestService {
 
   async findOne(id) {
     const request = await models.Request.findByPk(id, { include: ['employee'] })
+    console.log(request);
     if (!request) {
       throw boom.notFound('request not found');
     }
